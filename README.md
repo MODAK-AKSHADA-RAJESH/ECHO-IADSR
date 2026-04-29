@@ -1,3 +1,11 @@
+---
+title: ECHO Backend
+emoji: 🚀
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
 # ECHO: Explainable Cognitive Denoising for Personalized Recommendations
 
 > **Finally, algorithms that actually know you.**  
