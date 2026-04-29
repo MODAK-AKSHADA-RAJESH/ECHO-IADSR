@@ -1,0 +1,10 @@
+{
+  "final_best_loss": 5.4646,
+  "epochs_trained": 1000,
+  "model_path": "c:\\Akshada\\sem 6\\DL\\Course Project\\IADSR-main\\IADSR-main\\ml\\gru4rec_best.pth",
+  "sem_dim": 1024,
+  "embedding_dim": 64,
+  "hidden_dim": 128,
+  "num_items": 12102,
+  "novel_contribution": "attention-weighted noise scoring + BGE-large encoder"
+}

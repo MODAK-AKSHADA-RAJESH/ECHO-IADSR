@@ -1,0 +1,9 @@
+# Runtime-only dependencies for deployment (no training/embedding dependencies)
+# Uses CPU-only PyTorch wheel to keep Docker image lean (~250MB vs 2GB for CUDA)
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+fastapi==0.110.0
+uvicorn==0.29.0
+torch==2.5.1+cpu
+numpy>=1.26.0
+pydantic==2.10.3
