@@ -1,89 +1,106 @@
----
-title: ECHO Backend
-emoji: 🚀
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-pinned: false
----
 # ECHO: Explainable Cognitive Denoising for Personalized Recommendations
 
-> **Finally, algorithms that actually know you.**  
-> ECHO uses cross-modal semantic analysis to separate genuine interest from behavioral noise, making algorithmic recommendations transparent and correctable.
+**Live Demo:** [https://echo-iadsr.vercel.app](https://echo-iadsr.vercel.app) *(Log in with `alice@echo.com`, password: `alice`)*
 
-## The Problem
-Recommendation algorithms learn from *everything* you click — including the things you didn't mean (gifts, curiosity clicks, impulse browsing). This noisy data distorts your algorithmic profile, leading to irrelevant recommendations and contributing to filter bubbles.
+## 🎯 Objective & Description
+ECHO is an end-to-end, full-stack Deep Learning platform that tackles a fundamental flaw in modern recommender systems: **behavioral noise**. 
 
-## The ECHO Solution
-ECHO is an end-to-end full-stack platform that implements a novel variant of the IADSR (Intent-Aware Denoising Sequential Recommendation) architecture:
-1. **Lightweight Semantic Encoder:** Uses BAAI/bge-large-en-v1.5 to achieve near-SOTA accuracy with 24× fewer parameters than original implementations.
-2. **Attention-Weighted Noise Scoring:** A novel attention mechanism autonomously learns whether to trust behavioral, semantic, or cross-modal signals for each interaction.
-3. **Full-Stack Transparency:** A personalized Next.js web application that breaks down every recommendation into human-readable explanations.
+Standard recommendation algorithms (like GRU4Rec) assume every user click implies genuine, long-term interest. In reality, users click on items due to fleeting curiosity, accidental misclicks, or buying gifts. When algorithms treat this noise as genuine signal, it distorts the user's algorithmic profile and creates "filter bubbles."
 
-## Three Perspectives, One System
-ECHO is designed around three distinct user roles, each with a personalized interface:
-- **👤 Shopper:** Consumers view their personal recommendations, taste profile, and a transparent history of which interactions the AI kept vs. filtered out.
-- **🏢 Platform Manager:** Business analysts monitor platform-wide system health, average noise rates, and the aggregate impact of denoising on user retention.
-- **🔬 Researcher:** ML engineers review performance metrics (HR/NDCG), baselines, and ablation studies.
+ECHO solves this by implementing a novel variant of Intent-Aware Denoising Sequential Recommendation (IADSR). Before generating recommendations, ECHO evaluates a user's chronological history and utilizes a **Cross-Modal Attention Network** (comparing behavioral sequences against `BGE-Large` semantic text embeddings) to autonomously identify and drop noisy interactions. 
 
-## System Architecture
+Crucially, ECHO is deployed as an **Explainable AI (XAI)** web application. Instead of operating as a black box, it restores algorithmic accountability by explicitly showing users which items were filtered out of their profile and why.
 
-```text
-Raw Interactions (Amazon Beauty Dataset)
-       │
-       ▼
-[ BGE-Large Encoder ] ───────┐
-(Extracts semantic meaning)  │
-                             ▼
-[ GRU4Rec Backbone ] ──▶ [ Cross-Modal Alignment ]
-(Learns behavior)        (Identifies signal vs noise)
-                             │
-                             ▼
-                     [ Attention-Weighted Masking ]
-                     (Filters out one-off moments)
-                             │
-                             ▼
-                  [ Denoised Recommendations ]
-                             │
-                             ▼
-[ FastAPI Backend ] ──▶ [ Next.js 14 Frontend (3 Roles) ]
-```
+---
 
-## Performance Results
+## 🚀 Instructions to Install and Run
 
-| Model Configuration | HR@20 | NDCG@20 |
-|---------------------|-------|---------|
-| GRU4Rec (Baseline)  | 0.0390| 0.0143  |
-| ECHO (Ours)         | **0.0427**| **0.0206** |
-| Improvement         | +9.5% | +44%    |
+We provide three ways to run the ECHO platform.
 
-## Installation & Deployment
+### Option 1: Live Cloud Deployment (Recommended)
+You do not need to install anything. The entire platform is deployed live on the internet:
+*   **Frontend (Next.js):** Hosted on Vercel at [https://echo-iadsr.vercel.app](https://echo-iadsr.vercel.app)
+*   **Backend (FastAPI + PyTorch):** Hosted on a free-tier Hugging Face CPU Docker Space.
 
-ECHO is fully containerized with Docker Compose for single-command deployment.
-
-### Option 1: Docker (Recommended)
-Make sure Docker Desktop is running.
+### Option 2: Docker Compose (Local)
+If you have Docker Desktop installed, you can spin up the entire full-stack platform with a single command.
 ```bash
-docker compose up --build
-```
-- Frontend: `http://localhost:3000`
-- Backend API Docs: `http://localhost:8000/docs`
+git clone https://github.com/MODAK-AKSHADA-RAJESH/ECHO-IADSR.git
+cd ECHO-IADSR
 
-### Option 2: Local Development
-**Terminal 1 (Backend):**
+# Build and start the containers
+docker-compose up --build
+```
+*   Frontend will be available at `http://localhost:3000`
+*   Backend API documentation will be at `http://localhost:8000/docs`
+
+### Option 3: Manual Local Development
+**1. Start the Python Backend:**
 ```bash
+# It is recommended to use a virtual environment
 pip install -r requirements_app.txt
+
+# Run the FastAPI server
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-**Terminal 2 (Frontend):**
+**2. Start the Next.js Frontend:**
+Open a new terminal window.
 ```bash
 cd frontend
 npm install
+
+# Point the frontend to your local backend
+set NEXT_PUBLIC_API_URL=http://localhost:8000  # (Use $env:NEXT_PUBLIC_API_URL="..." in PowerShell)
+
 npm run dev
 ```
-Open `http://localhost:3000`
+Open `http://localhost:3000` in your browser.
 
-## Authors & Acknowledgments
-Built for IT549: Deep Learning (April 2026).
-Dataset: Amazon Beauty Product Reviews.
+---
+
+## 💻 How to Use the Application
+
+ECHO features Role-Based Access Control (RBAC) with three distinct user experiences tailored to different stakeholders. 
+
+Use the mock credentials below on the `/login` page to explore each perspective:
+
+### 1. The Shopper (`alice@echo.com` / `alice`)
+This is the consumer-facing interface demonstrating Explainable AI.
+*   **Recommendations:** View clean, denoised product recommendations. Click on any item to view it on Amazon.
+*   **My History:** This is the core of the explainability. View a chronological list of historical interactions. ECHO explicitly highlights which items were used to build the algorithmic profile, and which were discarded as "Noise" (with text explanations).
+*   **Profile:** View the user's "Signal Quality" score and their "Community Similarity" metric, which calculates L2-norm distances against the broader user base.
+
+### 2. The Platform Manager (`admin@echo.com` / `admin`)
+This interface is for business analysts ensuring platform health.
+*   **Platform Overview:** View real-time aggregate statistics on total users, average noise rates across the platform, and user retention estimates.
+*   **User Directory:** Inspect specific users to see their individual noise profiles.
+*   **Impact Analysis:** Visualizes the theoretical business impact of removing filter bubbles from the ecosystem.
+
+### 3. The ML Researcher (`researcher@echo.com` / `researcher`)
+This interface is for the data science team.
+*   **Model Methodology:** Explores the architectural block diagram, hyperparameter configurations, and the specific cross-modal mathematics driving the engine.
+*   **Ablation Study:** A detailed breakdown proving *why* the ECHO architecture was chosen by demonstrating the performance drop-off when specific modalities (Semantic, Behavioral, Cross-Modal) are removed.
+
+---
+
+## 📊 Additional Relevant Information
+
+### Key Technical Contributions
+1.  **Lightweight Semantic Encoder:** Replaced massive 8B-parameter generative LLMs (like LLaMA-3) used in standard IADSR with `BAAI/bge-large-en-v1.5` (335M parameters). This 24× reduction in parameter count makes real-time CPU deployment feasible.
+2.  **Attention-Weighted Gumbel Masking:** Replaced simple heuristic summation with a learnable attention layer coupled with a Gumbel-Sigmoid activation, allowing the network to make hard, differentiable "keep/drop" decisions.
+
+### Performance & Architectural Trade-off
+Evaluated on the public **Amazon Beauty Product Reviews** dataset (22,363 users, 12,102 items). 
+
+| Model Configuration | HR@20 | NDCG@20 | Parameters | Deployability |
+| :--- | :--- | :--- | :--- | :--- |
+| **GRU4Rec (Baseline)** | 0.0390 | 0.0143 | ~1.5M | High (CPU feasible) |
+| **Original IADSR (Llama-3-8B)** | *0.0486* | *0.0241* | ~8.0B | **None** (Requires 16GB+ VRAM) |
+| **ECHO (Our BGE-Large Variant)** | **0.0427** | **0.0206** | **~335M** | **High** (Runs on free-tier CPU) |
+
+**The Trade-off:** While the original theoretical IADSR architecture achieves the highest raw metrics by utilizing massive generative Large Language Models (LLMs) to compute semantic distances, it is computationally prohibitive for real-world e-commerce deployment. 
+
+By replacing the 8B-parameter LLM with our attention-weighted `BGE-Large` dense retrieval architecture, ECHO achieves a **24× reduction in parameter count**. While this results in a marginal drop from the theoretical maximum accuracy, it still achieves a massive **+44% NDCG@20 improvement** over the un-denoised GRU4Rec baseline. This deliberate architectural trade-off sacrifices a small fraction of academic accuracy to achieve sub-second, real-time inference viability, allowing us to successfully deploy the first full-stack, publicly accessible variant of IADSR.
+
+*Built for IT549: Deep Learning (2026).*
