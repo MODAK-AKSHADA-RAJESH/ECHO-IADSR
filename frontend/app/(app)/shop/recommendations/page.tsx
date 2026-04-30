@@ -3,21 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../components/AuthProvider';
 import { API } from '../../../../lib/api';
 
-// Beauty-relevant Unsplash fallback images — used when Amazon CDN returns a placeholder
-const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?q=80&w=600&auto=format&fit=crop", // skincare
-  "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=600&auto=format&fit=crop", // makeup
-  "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=600&auto=format&fit=crop", // hair
-  "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=600&auto=format&fit=crop", // fragrance
-  "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=600&auto=format&fit=crop", // nails
-  "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop", // skincare 2
-  "https://images.unsplash.com/photo-1614859324967-bdf32bfbc04c?q=80&w=600&auto=format&fit=crop", // body
-  "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=600&auto=format&fit=crop", // tools
-];
-
-function getFallbackImage(itemId: number): string {
-  return FALLBACK_IMAGES[itemId % FALLBACK_IMAGES.length];
-}
 
 export default function RecommendationsPage() {
   const { userId } = useAuth();
@@ -80,60 +65,38 @@ export default function RecommendationsPage() {
               target="_blank"
               rel="noopener noreferrer"
               key={idx} 
-              className={`group flex flex-col bg-gray-900 rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+              className={`group flex flex-col bg-gray-900 rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
                 isTopMatch 
-                  ? 'border-indigo-500/30 hover:border-indigo-500/60 hover:shadow-indigo-500/10' 
-                  : 'border-gray-800 hover:border-gray-700'
+                  ? 'border-indigo-500/50 hover:border-indigo-400 hover:shadow-indigo-500/10' 
+                  : 'border-gray-800 hover:border-gray-600'
               }`}
             >
-              {/* Product Image */}
-              <div className="h-48 w-full relative overflow-hidden bg-gray-800">
-                {item.image ? (
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onLoad={(e) => {
-                      // Amazon sometimes returns a 200 OK with a tiny 1x1 placeholder.
-                      // Detect it by checking rendered dimensions.
-                      const img = e.currentTarget;
-                      if (img.naturalWidth < 50 || img.naturalHeight < 50) {
-                        img.src = getFallbackImage(item.item_id);
-                      }
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.src = getFallbackImage(item.item_id);
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-600">No Image</div>
-                )}
+              <div className="flex justify-between items-start mb-4">
+                <span className={`px-2.5 py-1 text-xs font-bold rounded-md ${
+                  isTopMatch 
+                    ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' 
+                    : 'bg-gray-800 text-gray-400 border border-gray-700'
+                }`}>
+                  {isTopMatch ? 'Strong Match' : 'Good Match'}
+                </span>
                 
-                {/* Badge */}
-                <div className="absolute top-3 left-3">
-                  <span className={`px-2.5 py-1 text-xs font-bold rounded-md shadow-sm backdrop-blur-md ${
-                    isTopMatch 
-                      ? 'bg-indigo-500/90 text-white' 
-                      : 'bg-gray-900/80 text-gray-300'
-                  }`}>
-                    {isTopMatch ? 'Strong Match' : 'Good Match'}
-                  </span>
+                <div className="flex items-center gap-1.5 text-gray-500 group-hover:text-indigo-400 transition-colors">
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Amazon</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="text-sm font-semibold text-white leading-snug mb-2 line-clamp-2 group-hover:text-indigo-400 transition-colors">
-                  {item.title}
-                </h3>
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-800/50">
-                  <p className="text-xs text-gray-500">
-                    Confidence Score
-                  </p>
-                  <p className="text-xs font-mono font-medium text-gray-400">
-                    {(item.score * 100).toFixed(1)}%
-                  </p>
-                </div>
+              <h3 className="text-base font-semibold text-white leading-snug mb-6 line-clamp-3 group-hover:text-indigo-300 transition-colors">
+                {item.title}
+              </h3>
+              
+              <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-800">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  Confidence Score
+                </p>
+                <p className={`text-sm font-mono font-bold ${isTopMatch ? 'text-indigo-400' : 'text-gray-300'}`}>
+                  {(item.score * 100).toFixed(1)}%
+                </p>
               </div>
             </a>
           );

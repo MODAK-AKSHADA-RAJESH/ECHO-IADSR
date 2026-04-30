@@ -59,44 +59,13 @@ export default function HistoryPage() {
               {/* Content Area */}
               <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-6 flex-1 items-center">
                 
-                {/* Thumbnail */}
-                <div className="h-20 w-20 shrink-0 rounded-xl overflow-hidden bg-gray-800 border border-gray-700 relative">
-                  {item.image ? (
-                    <>
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        onLoad={(e) => {
-                          // Amazon returns a 1x1 placeholder for missing images — detect & hide it
-                          const img = e.currentTarget;
-                          if (img.naturalWidth < 50 || img.naturalHeight < 50) {
-                            img.style.display = 'none';
-                            const parent = img.parentElement;
-                            if (parent) {
-                              const fb = parent.querySelector('.img-fallback') as HTMLElement;
-                              if (fb) fb.style.display = 'flex';
-                            }
-                          }
-                        }}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const parent = e.currentTarget.parentElement;
-                          if (parent) {
-                            const fb = parent.querySelector('.img-fallback') as HTMLElement;
-                            if (fb) fb.style.display = 'flex';
-                          }
-                        }}
-                      />
-                      <div className="img-fallback w-full h-full absolute inset-0 items-center justify-center text-gray-500 text-xl font-bold bg-gray-800 hidden">
-                        {item.title?.charAt(0).toUpperCase() || '?'}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl font-bold">
-                      {item.title?.charAt(0).toUpperCase() || '?'}
-                    </div>
-                  )}
+                {/* Minimalist Icon */}
+                <div className={`h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-xl border flex items-center justify-center ${
+                  isKept 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' 
+                    : 'bg-gray-800/50 border-gray-700/50 text-gray-600'
+                }`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 </div>
 
                 {/* Details */}
