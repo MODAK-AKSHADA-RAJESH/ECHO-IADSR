@@ -2,7 +2,7 @@
 
 **Live Demo:** [https://echo-iadsr.vercel.app](https://echo-iadsr.vercel.app) *(Log in with `alice@echo.com`, password: `alice`)*
 
-## 🎯 Objective & Description
+## Objective & Description
 ECHO is an end-to-end, full-stack Deep Learning platform that tackles a fundamental flaw in modern recommender systems: **behavioral noise**. 
 
 Standard recommendation algorithms (like GRU4Rec) assume every user click implies genuine, long-term interest. In reality, users click on items due to fleeting curiosity, accidental misclicks, or buying gifts. When algorithms treat this noise as genuine signal, it distorts the user's algorithmic profile and creates "filter bubbles."
@@ -13,7 +13,7 @@ Crucially, ECHO is deployed as an **Explainable AI (XAI)** web application. Inst
 
 ---
 
-## 🚀 Instructions to Install and Run
+## Instructions to Install and Run
 
 We provide three ways to run the ECHO platform.
 
@@ -59,7 +59,7 @@ Open `http://localhost:3000` in your browser.
 
 ---
 
-## 💻 How to Use the Application
+## How to Use the Application
 
 ECHO features Role-Based Access Control (RBAC) with three distinct user experiences tailored to different stakeholders. 
 
@@ -84,7 +84,7 @@ This interface is for the data science team.
 
 ---
 
-## 📊 Additional Relevant Information
+## Additional Relevant Information
 
 ### Key Technical Contributions
 1.  **Lightweight Semantic Encoder:** Replaced massive 8B-parameter generative LLMs (like LLaMA-3) used in standard IADSR with `BAAI/bge-large-en-v1.5` (335M parameters). This 24× reduction in parameter count makes real-time CPU deployment feasible.
